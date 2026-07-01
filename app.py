@@ -48,6 +48,7 @@ filtro_situacao = [
 ]
 
 app = Dash(__name__)
+server = app.server
 
 CARD_STYLE = {
     "backgroundColor": "white",
