@@ -1,0 +1,7 @@
+dash
+geopandas
+plotly
+pandas
+sqlalchemy
+psycopg2-binary
+gdown

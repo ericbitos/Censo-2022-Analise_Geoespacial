@@ -1,15 +1,29 @@
+import os
+import gdown
+import zipfile
 import geopandas as gpd
 import pandas as pd
 import plotly.express as px
 from dash import Dash, Input, Output, dcc, html
 from sqlalchemy import create_engine
-import os
 
 # --- Conexão PostgreSQL ---
 engine = create_engine(os.environ.get("DATABASE_URL"))
 
 # --- Carrega shapefile completo uma vez ---
-gdf = gpd.read_file(r"D:\VSCode\FUNASA\BR_setores\BR_setores_CD2022.shp")
+SHAPEFILE_PATH = "BR_setores_CD2022.shp"
+GDRIVE_ID = ""
+def carregar_shapefile():
+    if not os.path.exists(SHAPEFILE_PATH):
+        print("Baixando shapefile do Google Drive...")
+        gdown.download(id=GDRIVE_ID, output="shapefile.zip", quiet=False)
+        with zipfile.ZipFile("shapefile.zip", "r") as z:
+            z.extractall(".")
+        os.remove("shapefile.zip")
+        print("Pronto!")
+    return gpd.read_file(SHAPEFILE_PATH)
+
+gdf = carregar_shapefile()
 
 # --- Busca lista de UFs do banco ---
 df_ufs = pd.read_sql(
