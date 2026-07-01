@@ -11,17 +11,24 @@ from sqlalchemy import create_engine
 engine = create_engine(os.environ.get("DATABASE_URL"))
 
 # --- Carrega shapefile completo uma vez ---
-SHAPEFILE_PATH = "BR_setores_CD2022.shp"
-GDRIVE_ID = ""
+LOCAL_PATH = r"D:\VSCode\FUNASA\Censo-2022-Analise_Geoespacial\BR_setores\BR_setores_CD2022.shp"
+SERVER_PATH = "BR_setores_CD2022.shp"
+GDRIVE_ID = "1epwpeMaUeCPkHI5wggFwtw3ErgcBw0Zf"
+
 def carregar_shapefile():
-    if not os.path.exists(SHAPEFILE_PATH):
+    if os.path.exists(LOCAL_PATH):
+        print("Carregando shapefile local...")
+        return gpd.read_file(LOCAL_PATH)
+    
+    if not os.path.exists(SERVER_PATH):
         print("Baixando shapefile do Google Drive...")
-        gdown.download(id=GDRIVE_ID, output="shapefile.zip", quiet=False)
-        with zipfile.ZipFile("shapefile.zip", "r") as z:
+        gdown.download(id=GDRIVE_ID, output="BR_setores_CD2022.zip", quiet=False)
+        with zipfile.ZipFile("BR_setores_CD2022.zip", "r") as z:
             z.extractall(".")
-        os.remove("shapefile.zip")
+        os.remove("BR_setores_CD2022.zip")
         print("Pronto!")
-    return gpd.read_file(SHAPEFILE_PATH)
+    
+    return gpd.read_file(SERVER_PATH)
 
 gdf = carregar_shapefile()
 
